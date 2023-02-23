@@ -1,38 +1,43 @@
+# base Class of your App inherits from the App class.
 from kivy.app import App
-from kivy.uix.screenmanager import Screen
-from kivy.lang.builder import Builder
+# GridLayout arranges children in a matrix.
+from kivy.uix.gridlayout import GridLayout
+# Label is used to label something
 from kivy.uix.label import Label
-from kivy.clock import Clock
-import hashlib
-import hmac
-import time
-import pyotp
+# used to take input from users
+from kivy.uix.textinput import TextInput
 
 
-class MyLabel(Label):
-    def __init__(self, key, **kwargs):
-        super().__init__(**kwargs)
-        self.key = key
-        self.text = "Generating OTP... "
-        Clock.schedule_interval(self.update_otp, 10)
+class LoginScreen(GridLayout):
+	def __init__(self, **var_args):
 
-    def update_otp(self, dt):
-        otp = self.generate_totp(self.key)
-        self.text = f"OTP : {otp}"
+		super(LoginScreen, self).__init__(**var_args)
+		# super function can be used to gain access
+		# to inherited methods from a parent or sibling class
+		# that has been overwritten in a class object.
+		self.cols = 2	 # You can change it accordingly
+		self.add_widget(Label(text='User Name'))
+		self.username = TextInput(multiline=True)
 
-    def generate_totp(self, key):
-        totp = pyotp.TOTP(key)
-        rnow = totp.now()
-    
-        return str(rnow).zfill(6)
+		# multiline is used to take
+		# multiline input if it is true
+		self.add_widget(self.username)
+		self.add_widget(Label(text='password'))
+		self.password = TextInput(password=True, multiline=False)
+
+		# password true is used to hide it
+		# by * self.add_widget(self.password)
+		self.add_widget(Label(text='Comfirm password'))
+		self.password = TextInput(password=True, multiline=False)
+		self.add_widget(self.password)
 
 
+# the Base Class of our Kivy App
 class MyApp(App):
-    def build(self):
-        self.title = 'Authenticator'
-        key = "5BRYRIS55DNQNJPBGTTTOHZQRJDXYFGB"
-        return MyLabel(key=key)
+	def build(self):
+		# return a LoginScreen() as a root widget
+		return LoginScreen()
 
 
 if __name__ == '__main__':
-    MyApp().run()
+	MyApp().run()
